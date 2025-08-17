@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task Manager Dashboard</title>
+  
+  <!-- PWA Meta Tags -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Daily Task Manager">
+  <meta name="description" content="A modern daily task management dashboard with project tracking and team collaboration">
+  
+  <!-- Apple Touch Icons -->
+  <link rel="apple-touch-icon" href="icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72.png">
+  
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <i class="fas fa-tasks"></i>
+          <h1>Daily Task Manager</h1>
+        </div>
+        <button id="installBtn" class="install-btn" hidden>
+          <i class="fas fa-download"></i>
+          Install App
+        </button>
+      </div>
+    </header>
+
+    <div class="dashboard">
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-calendar-day"></i>
+          </div>
+          <div class="stat-content">
+            <h3 id="todayTasks">0</h3>
+            <p>Today's Tasks</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <h3 id="completedTasks">0</h3>
+            <p>Completed</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="stat-content">
+            <h3 id="pendingTasks">0</h3>
+            <p>Pending</p>
+          </div>
+        </div>
+      </div>
+
+      <section class="task-form">
+        <div class="form-header">
+          <h2><i class="fas fa-plus-circle"></i> Add New Task</h2>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="dateInput">
+              <i class="fas fa-calendar"></i> Date
+            </label>
+            <input type="date" id="dateInput" />
+          </div>
+          <div class="form-group">
+            <label for="projectInput">
+              <i class="fas fa-folder"></i> Project
+            </label>
+            <input type="text" id="projectInput" placeholder="Enter project name" />
+          </div>
+          <div class="form-group">
+            <label for="assigneeInput">
+              <i class="fas fa-user"></i> Assignee
+            </label>
+            <input type="text" id="assigneeInput" placeholder="Enter assignee name" />
+          </div>
+          <div class="form-group">
+            <label>
+              <i class="fas fa-flag"></i> Priority
+            </label>
+            <div class="priority-buttons">
+              <button type="button" class="priority-btn priority-low active" data-priority="low">
+                <i class="fas fa-arrow-down"></i> Low
+              </button>
+              <button type="button" class="priority-btn priority-medium active" data-priority="medium">
+                <i class="fas fa-minus"></i> Medium
+              </button>
+              <button type="button" class="priority-btn priority-high" data-priority="high">
+                <i class="fas fa-arrow-up"></i> High
+              </button>
+            </div>
+          </div>
+          <div class="form-group task-input-group">
+            <label for="taskInput">
+              <i class="fas fa-edit"></i> Task Description
+            </label>
+            <div class="task-input">
+              <input type="text" id="taskInput" placeholder="Enter a task description" />
+              <button id="addTaskBtn" class="add-btn">
+                <i class="fas fa-plus"></i> Add Task
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="task-list-section">
+        <div class="section-header">
+          <h2><i class="fas fa-list"></i> Task List</h2>
+          <div class="filter-controls">
+            <div class="date-range-filter">
+              <div class="filter-group">
+                <label for="filterFromDate">From:</label>
+                <input type="date" id="filterFromDate" class="filter-date-input" />
+              </div>
+              <div class="filter-group">
+                <label for="filterToDate">To:</label>
+                <input type="date" id="filterToDate" class="filter-date-input" />
+              </div>
+            </div>
+            <select id="filterProject" class="filter-select">
+              <option value="">All Projects</option>
+            </select>
+            <select id="filterAssignee" class="filter-select">
+              <option value="">All Assignees</option>
+            </select>
+            <select id="filterPriority" class="filter-select">
+              <option value="">All Priorities</option>
+              <option value="high">High Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="low">Low Priority</option>
+            </select>
+            <button id="clearFilters" class="clear-filters-btn" title="Clear all filters">
+              <i class="fas fa-recycle"></i>
+            </button>
+          </div>
+        </div>
+        <ul id="taskList" class="task-list"></ul>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <small><i class="fas fa-wifi"></i> Works offline • Your data stays in your browser</small>
+    </footer>
+  </main>
+
+  <!-- Edit Task Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Edit Task</h3>
+        <button class="close-btn" id="closeModal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="editProjectInput">
+            <i class="fas fa-folder"></i> Project
+          </label>
+          <input type="text" id="editProjectInput" />
+        </div>
+        <div class="form-group">
+          <label for="editAssigneeInput">
+            <i class="fas fa-user"></i> Assignee
+          </label>
+          <input type="text" id="editAssigneeInput" />
+        </div>
+        <div class="form-group">
+          <label>
+            <i class="fas fa-flag"></i> Priority
+          </label>
+          <div class="edit-priority-buttons">
+            <button type="button" class="priority-btn priority-low" data-priority="low">
+              <i class="fas fa-arrow-down"></i> Low
+            </button>
+            <button type="button" class="priority-btn priority-medium active" data-priority="medium">
+              <i class="fas fa-minus"></i> Medium
+            </button>
+            <button type="button" class="priority-btn priority-high" data-priority="high">
+              <i class="fas fa-arrow-up"></i> High
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editTaskInput">
+            <i class="fas fa-edit"></i> Task Description
+          </label>
+          <input type="text" id="editTaskInput" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="secondary-btn" id="cancelEdit">Cancel</button>
+        <button class="primary-btn" id="saveEdit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
